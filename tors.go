@@ -2,6 +2,7 @@
 package tors
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -30,17 +31,17 @@ type Client struct {
 
 // Search performs a search with the given query and returns a single magnet
 // URL.
-func (c *Client) Search(q string) (string, error) {
+func (c *Client) Search(ctx context.Context, q string) (string, error) {
 	if q == "" {
 		return "", errors.New("tors: invalid empty query search")
 	}
 
 	for _, uf := range c.urls {
-		req := &http.Request{
+		req := (&http.Request{
 			Method: "GET",
 			URL:    uf(q),
 			Header: http.Header{},
-		}
+		}).WithContext(ctx)
 		res, err := c.transport.RoundTrip(req)
 		if err != nil {
 			return "", errors.Wrap(err, "http error")

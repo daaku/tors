@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"net/url"
@@ -32,7 +33,7 @@ func Main() error {
 	if err != nil {
 		return errors.Wrap(err, "invalid client")
 	}
-	uri, err := client.Search(*query)
+	uri, err := client.Search(context.Background(), *query)
 	if err != nil {
 		return errors.Wrap(err, "search failed")
 	}

@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 
+	"golang.org/x/net/context"
+
 	"github.com/facebookgo/ensure"
 )
 
@@ -31,7 +33,7 @@ func TestNoResults(t *testing.T) {
 		})),
 	)
 	ensure.Nil(t, err)
-	uri, err := c.Search("unimportant")
+	uri, err := c.Search(context.Background(), "unimportant")
 	ensure.True(t, IsErrNoResults(err), err)
 	ensure.Err(t, err, regexp.MustCompile("no results found"))
 	ensure.DeepEqual(t, uri, "")
@@ -46,7 +48,7 @@ func TestTransportError(t *testing.T) {
 		})),
 	)
 	ensure.Nil(t, err)
-	uri, err := c.Search("unimportant")
+	uri, err := c.Search(context.Background(), "unimportant")
 	ensure.Err(t, err, regexp.MustCompile(givenErr.Error()))
 	ensure.DeepEqual(t, uri, "")
 }
@@ -62,7 +64,7 @@ func TestBodyReadError(t *testing.T) {
 		})),
 	)
 	ensure.Nil(t, err)
-	uri, err := c.Search("unimportant")
+	uri, err := c.Search(context.Background(), "unimportant")
 	ensure.Err(t, err, regexp.MustCompile(givenErr.Error()))
 	ensure.DeepEqual(t, uri, "")
 }
@@ -87,7 +89,7 @@ func TestNormalResults(t *testing.T) {
 		})),
 	)
 	ensure.Nil(t, err)
-	uri, err := c.Search("unimportant")
+	uri, err := c.Search(context.Background(), "unimportant")
 	ensure.Nil(t, err)
 	ensure.DeepEqual(t, uri, "magnet:a")
 }
@@ -101,7 +103,7 @@ func TestNewClientNoURLsError(t *testing.T) {
 func TestEmptyQuerySearch(t *testing.T) {
 	c, err := NewClient(dummyURL)
 	ensure.Nil(t, err)
-	uri, err := c.Search("")
+	uri, err := c.Search(context.Background(), "")
 	ensure.Err(t, err, regexp.MustCompile("empty query search"))
 	ensure.DeepEqual(t, uri, "")
 }
